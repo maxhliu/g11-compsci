@@ -1,0 +1,28 @@
+/*
+ * Max Liu
+ * October 2, 2012
+ * Liu_Max_Pg21Ex3
+ * ICS3U
+ * Mister Lim
+ */
+package liu_max_pg21ex3;
+
+/**
+ *
+ * @author Max
+ */
+public class Liu_Max_Pg21Ex3 {
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        System.out.println("***************");
+        System.out.format("%s %14s", "*", "*\n");
+        System.out.format("%s %14s", "*", "*\n");
+        System.out.format("%s %14s", "*", "*\n");
+        System.out.format("%s %14s", "*", "*\n");
+        System.out.format("%s %14s", "*", "*\n");
+        System.out.println("***************");
+    }
+}

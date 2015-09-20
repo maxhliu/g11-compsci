@@ -1,0 +1,340 @@
+/*----------------------------------------------------------------------------*/
+/* Copyright (c) FIRST 2008. All Rights Reserved.                             */
+/* Open Source Software - may be modified and shared by FRC teams. The code   */
+/* must be accompanied by the FIRST BSD license file in the root directory of */
+/* the project.                                                               */
+/*----------------------------------------------------------------------------*/
+package edu.wpi.first.wpilibj.templates;
+
+import edu.wpi.first.wpilibj.CANJaguar;
+import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.Victor;
+import edu.wpi.first.wpilibj.can.CANTimeoutException;
+
+/**
+ * The VM is configured to automatically run this class, and to call the
+ * functions corresponding to each mode, as described in the IterativeRobot
+ * documentation. If you change the name of this class or the package after
+ * creating this project, you must also update the manifest file in the resource
+ * directory.
+ */
+public class RobotTemplate extends IterativeRobot {
+
+    //Declare all of the CANJaguar motor controllers
+    CANJaguar frontLeft;
+    CANJaguar rearLeft;
+    CANJaguar frontRight;
+    CANJaguar rearRight;
+    CANJaguar turret;
+    CANJaguar shooter;
+    //Initialize the three Victor motor controllers for the intake
+    Victor lowerIntake = new Victor(3);
+    Victor leftIntake = new Victor(1);
+    Victor rightIntake = new Victor(2);
+    //Initialize the joystick
+    Joystick gamePad = new Joystick(1);
+    //Initialize the relay for the lights
+    Relay lights = new Relay(1);
+
+    /**
+     * This method performs the necessary actions before the driver controlled
+     * period.
+     *
+     * This includes things such as assigning ports, potentiometers, control
+     * modes, position references, and neutral modes to jaguars.
+     */
+    public void robotInit() {
+        try {
+            //Assign ports to the drivetrain motors
+            rearLeft = new CANJaguar(2);
+            frontLeft = new CANJaguar(3);
+            rearRight = new CANJaguar(4);
+            frontRight = new CANJaguar(5);
+            //Assign port 9 to the turret jaguar
+            turret = new CANJaguar(9);
+            //Tell the jaguar that its potentiometer is a ten turn potentiometer.
+            //This means that it can only turn ten times, and it will give its 
+            //position reading as a value from 0-10.
+            turret.configPotentiometerTurns(10);
+            //Set the potentiometer as the position reference for the turret jaguar
+            turret.setPositionReference(CANJaguar.PositionReference.kPotentiometer);
+            //Assign port 8 for the shooter jaguar
+            shooter = new CANJaguar(8);
+            //Tell the jaguar that its encoder has 256 ticks per revolution.
+            //This means that for every turn, the encoder light will flash 256
+            //times.
+            shooter.configEncoderCodesPerRev(256);
+            //Set the encoder as the position reference for the shooter jaguar
+            shooter.setSpeedReference(CANJaguar.SpeedReference.kQuadEncoder);
+            //Set the neutral mode of the shooter as coast. This means that when
+            //the shooter needs to stop, the motor will not run backwards.
+            //Instead, it will not run at all. This prevents the motor being
+            //damaged by the fast speeds it is spinning at.
+            shooter.configNeutralMode(CANJaguar.NeutralMode.kCoast);
+        } catch (CANTimeoutException ex) {
+            //Catch the CANTimeoutException so that the program doesn't crash.
+            //Instead, print out what happened and where so that we can know
+            //which jaguar didn't respond in time. It's most likely defective,
+            //and knowing where the exception took place will let us know which
+            //jaguar should be replaced.
+            ex.printStackTrace();
+        }
+
+    }
+
+    /**
+     * This method runs periodically during the autonomous period.
+     *
+     * There is no autonomous mode for this project, so this method is blank.
+     */
+    public void autonomousPeriodic() {
+    }
+
+    /**
+     * This method runs the two left motors with power of power.
+     *
+     * The purpose of this method is to make the drive train code clearer and
+     * more concise.
+     *
+     * @param power This is the value passed in to determine what power to run
+     * the motors at.
+     */
+    private void driveLeft(double power) {
+        try {
+            //Run the front left motor at power
+            frontLeft.setX(power);
+            //Run the rear left motor at power
+            rearLeft.setX(power);
+        } catch (CANTimeoutException ex) {
+            //Catch the CANTimeoutException so that the program doesn't crash.
+            //Instead, print out what happened and where so that we can know
+            //which jaguar didn't respond in time. It'power most likely defective,
+            //and knowing where the exception took place will let us know which
+            //jaguar should be replaced.
+            ex.printStackTrace();
+        }
+    }
+
+    /**
+     * This method runs the two right motors with power of power.
+     *
+     * The purpose of this method is to make the drive train code clearer and
+     * more concise.
+     *
+     * @param power This is the value passed in to determine what power to run
+     * the motors at.
+     */
+    private void driveRight(double power) {
+        try {
+            //Run the front right motor at power
+            frontRight.setX(power);
+            //Run the rear right motor at power
+            rearRight.setX(power);
+        } catch (CANTimeoutException ex) {
+            //Catch the CANTimeoutException so that the program doesn't crash.
+            //Instead, print out what happened and where so that we can know
+            //which jaguar didn't respond in time. It'power most likely defective,
+            //and knowing where the exception took place will let us know which
+            //jaguar should be replaced.
+            ex.printStackTrace();
+        }
+    }
+
+    /**
+     * This method runs the three intake motors with power of power.
+     *
+     * The purpose of this method is to make the intake code clearer and more
+     * concise.
+     *
+     * @param power This is the value passed in to determine what power to run
+     * the motors at.
+     */
+    private void runIntake(double power) {
+        //run the lower intake motor at -power. It needs to be reversed to sync up
+        //with the other intake motors
+        lowerIntake.set(-power);
+        //run the left intake motor at power
+        leftIntake.set(power);
+        //run the right intake motor at power
+        rightIntake.set(power);
+    }
+
+    /**
+     * This method runs the turret at two different speeds depending on the
+     * value passed in, while having limits in place to prevent it from turning
+     * too far.
+     *
+     * Using a speed variable, this method determines the what speed to run the
+     * motors at and which axis to use. This means that with two different axes,
+     * there can be two different speeds. This is why the axis and slow
+     * variables are required: to distinguish between the two axis inputs.
+     *
+     * @param axis This integer determines what axis to use to control the
+     * turret motors.
+     * @param slow This boolean determines what to run the turret motors.
+     */
+    private void runTurret(int axis, boolean slow) {
+        try {
+            //Declare the speed variable
+            double speed;
+            //If true is passed in
+            if (slow) {
+                //set a slow speed
+                speed = 0.2;
+                //if not
+            } else {
+                //set a faster speed
+                speed = 0.7;
+            }
+            //If the the turret is past 5, that is, past its upper limit
+            if (turret.getPosition() > 5) {
+                //Do not allow it to continue past its limit, but allow it
+                //to return to its allowed positions.
+                turret.setX(speed * Math.min(0, gamePad.getRawAxis(axis)));
+                //If the turret is less than 3, that is, past its lower limit
+            } else if (turret.getPosition() < 3) {
+                //Do not allow it to continue past its limit, but allow it
+                //to return to its allowed positions.
+                turret.setX(speed * Math.max(0, gamePad.getRawAxis(axis)));
+                //If it is past neither its limits
+            } else {
+                //continue normally. The turret's maxiumum speed is at 20%
+                //of its motor's maximum speed.
+                turret.setX(speed * gamePad.getRawAxis(axis));
+            }
+        } catch (CANTimeoutException ex) {
+            //Catch the CANTimeoutException so that the program doesn't crash.
+            //Instead, print out what happened and where so that we can know
+            //which jaguar didn't respond in time. It's most likely defective,
+            //and knowing where the exception took place will let us know which
+            //jaguar should be replaced.
+            ex.printStackTrace();
+        }
+    }
+
+    /**
+     * This method determines how the joystick controls the drive train motors.
+     *
+     * f and t are the axis numbers of the controls. Having them be passed in
+     * allows them to be changed easily. The input is also made less sensitive
+     * by cubing the number given by the joystick. Since it is a number from -1
+     * to 1, it will keep the right direction, and require the axis to be moved
+     * more. However, when it is on full speed (1 or -1) the value will be
+     * unchanged.
+     *
+     * @param f This is the axis number of the axis that will control the
+     * forward motion of the robot.
+     * @param t This is the axis number of the axis that will control the
+     * turning motion of the robot.
+     */
+    private void drive(int f, int t) {
+        //This is the forward value. It is derived by cubing the forward axis input to make it less sensitive.
+        double forward = (gamePad.getRawAxis(f) * gamePad.getRawAxis(f) * gamePad.getRawAxis(f));
+        //This is the turn value. It is derived by cubing the turning axis input to make it less sensitive.
+        double turn = (gamePad.getRawAxis(t) * gamePad.getRawAxis(t) * gamePad.getRawAxis(t));
+        /**
+         * Since the right motors and the left motors face opposite directions,
+         * one side needs to be reversed. In this case, it's the left side.
+         */
+        driveLeft(-forward + turn);
+        driveRight(forward + turn);
+    }
+
+    /**
+     * This method sets the shooter speed.
+     *
+     * @param power This is the power sent to the shooter motor.
+     */
+    private void shoot(double power) {
+        try {
+            shooter.setX(power);
+        } catch (CANTimeoutException ex) {
+            //Catch the CANTimeoutException so that the program doesn't crash.
+            //Instead, print out what happened and where so that we can know
+            //which jaguar didn't respond in time. It's most likely defective,
+            //and knowing where the exception took place will let us know which
+            //jaguar should be replaced.
+            ex.printStackTrace();
+        }
+    }
+
+    /**
+     * This method controls the lights on the robot.
+     *
+     * When a button is held down, the lights are on. When it is released, the
+     * lights turn off.
+     *
+     * @param c This is the button number which controls the lights.
+     */
+    private void lightSwitch(int c) {
+        //If the button is being held down
+        if (gamePad.getRawButton(c)) {
+            //Turn lights on
+            lights.set(Relay.Value.kForward);
+            //If not,
+        } else {
+            //Keep the lights off
+            lights.set(Relay.Value.kReverse);
+        }
+    }
+
+    /**
+     * This method runs periodically during the driver controlled period.
+     *
+     * It is in this method that subsystem methods are called and sensor values
+     * are printed out for debugging.
+     */
+    public void teleopPeriodic() {
+
+        //Drivetrain code, setting axis 3 as the forward axis, and 2 as the turn axis.
+        drive(3, 2);
+
+        //If button 6 is pressed
+        if (gamePad.getRawButton(6)) {
+            //Run the intake to intake balls
+            runIntake(0.5);
+            //If not, and if button 8 is pressed
+        } else if (gamePad.getRawButton(8)) {
+            //Run the intake to move balls out of the intake
+            runIntake(-0.5);
+            //If neither of these conditions were met
+        } else {
+            //Do nothing, and make sure the intake isn't running
+            runIntake(0);
+        }
+
+        //Set axis 1 as the slow control for the turret
+        runTurret(1, true);
+        //Set axis 5 as the fast control for the turret
+        runTurret(5, false);
+
+        /**
+         * Assign axis 6 to control the speed. Since axis 6 is the vertical
+         * d-pad axis, it gives values of -1 and 1. By multiplying by 0.93, we
+         * don't run the motor at its full power, but still get an appreciable
+         * portion of its capabilities.
+         */
+        shoot(gamePad.getRawAxis(6) * 0.93);
+
+        //Here, we print out sensor values for debugging purposes.
+        try {
+            //Print out the position value on the turret's potentiometer
+            System.out.println("Turret Pot: " + turret.getPosition());
+            //Print out the speed value on the shooter's encoder
+            System.out.println("Encoder: " + shooter.getSpeed());
+        } catch (CANTimeoutException ex) {
+            //Catch the CANTimeoutException so that the program doesn't crash.
+            //Instead, print out what happened and where so that we can know
+            //which jaguar didn't respond in time. It's most likely defective,
+            //and knowing where the exception took place will let us know which
+            //jaguar should be replaced.
+            ex.printStackTrace();
+        }
+
+        //Assign button 3 to control the lights.
+        lightSwitch(3);
+
+    }
+}

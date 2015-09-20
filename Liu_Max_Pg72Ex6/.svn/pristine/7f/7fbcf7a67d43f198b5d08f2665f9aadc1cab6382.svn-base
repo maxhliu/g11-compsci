@@ -1,0 +1,29 @@
+/*
+ * Max Liu
+ * November 20, 2012
+ * Liu_Max_Pg72Ex6
+ * ICS3U
+ * Mister Lim
+ */
+package liu_max_pg72ex6;
+
+
+/**
+ *
+ * @author Max
+ */
+public class Liu_Max_Pg72Ex6 {
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        for (double star = 1; star <= 40; star++) {
+            System.out.print("The square, square root, and reciprocal of " + star + " are: ");
+            System.out.println("Square root:" + Math.sqrt(star) + "\t square: " + (star * star) + "\t reciprocal: " + (1 / star));
+            if (star % 5 == 0) {
+                System.out.println("");
+            }
+        }
+    }
+}

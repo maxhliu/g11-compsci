@@ -1,0 +1,26 @@
+/*
+ * October 16, 2012
+ * Liu_Max_Pg40Ex25
+ * ICS3U
+ * Mister Lim
+ */
+package liu_max_pg40ex25;
+
+import javax.swing.JOptionPane;
+
+/**
+ *
+ * @author Max
+ */
+public class Liu_Max_Pg40Ex25 {
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        String surName = JOptionPane.showInputDialog("Key in thy sur name.","Ye Olde Box of Texte");
+        String givenName = JOptionPane.showInputDialog("Key in thy given name.","Ye Olde Box of Texte");
+
+        JOptionPane.showMessageDialog(null, "Thou art named: " + givenName + " " + surName + ".");
+    }
+}

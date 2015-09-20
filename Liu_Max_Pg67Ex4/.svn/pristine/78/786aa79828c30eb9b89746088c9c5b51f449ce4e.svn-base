@@ -1,0 +1,29 @@
+/*
+ * Max Liu
+ * November 1, 2012
+ * Liu_Max_Pg67Ex4
+ * ICS3U
+ * Mister Lim
+ */
+package liu_max_pg67ex4;
+
+import java.util.Scanner;
+
+/**
+ *
+ * @author Max
+ */
+public class Liu_Max_Pg67Ex4 {
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        Scanner myScanner = new Scanner(System.in);
+        String input = myScanner.next();
+        double number = Double.parseDouble(input);
+        double power2 = Math.ceil(Math.log(number)/Math.log(2));
+        System.out.println("The smallest power of 2 is: " + power2 + ". 2^" + power2 + " = " + Math.pow(2, power2) + " >= " + number);
+        System.out.println(Math.log(number)/Math.log(2));
+    }
+}

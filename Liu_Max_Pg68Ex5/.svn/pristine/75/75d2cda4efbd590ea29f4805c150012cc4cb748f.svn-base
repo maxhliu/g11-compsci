@@ -1,0 +1,39 @@
+/*
+ * Max Liu
+ * November 6, 2012
+ * Liu_Max_Pg68Ex6
+ * ICS3U-1
+ * Mr. Lim
+ */
+package liu_max_pg68ex5;
+
+import java.util.Scanner;
+
+/**
+ *
+ * @author maxliu
+ */
+public class Liu_Max_Pg68Ex5 {
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        Scanner myScanner = new Scanner(System.in);
+        int input = -1, sum = 0;
+        System.out.println("Enter a positive integer.");
+        do {
+            input = myScanner.nextInt();
+            if (input <= 0) {
+                System.out.println("You are an ignoramus.");
+            }
+
+        } while (input <= 0);
+
+        int count = (int) Math.log10(input) + 1;
+        for (int i = 1; i <= count; i++) {
+            sum += (int) ((input % Math.pow(10, i)) / Math.pow(10, i - 1));
+        }
+        System.out.println("Your number is " + input + ", and the sum of the digits of said number is " + sum);
+    }
+}

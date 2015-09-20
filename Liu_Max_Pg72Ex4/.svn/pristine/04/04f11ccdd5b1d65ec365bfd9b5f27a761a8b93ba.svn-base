@@ -1,0 +1,27 @@
+/*
+ * Max Liu
+ * November 20, 2012
+ * Liu_Max_Stones
+ * ICS3U
+ * Mister Lim
+ */
+package liu_max_pg72ex4;
+
+/**
+ *
+ * @author Max
+ */
+public class Liu_Max_Pg72Ex4 {
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        double thickness = 0.09, area = 1;
+        for (int cake = 0; cake < 40; cake++) {
+            thickness *= 2;
+            area /= 2;
+        }
+        System.out.println("The area is: " + area + " m^2. The thickness is: " + thickness + " mm.");
+    }
+}

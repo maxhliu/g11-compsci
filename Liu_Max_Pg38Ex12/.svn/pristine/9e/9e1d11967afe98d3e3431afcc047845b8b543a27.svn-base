@@ -1,0 +1,32 @@
+/*
+ * Max Liu
+ * October 14, 2012
+ * Liu_Max_Pg38Ex12
+ * ICS3U
+ * Mister Lim
+ */
+package liu_max_pg38ex12;
+
+/**
+ *
+ * @author Max
+ */
+
+import java.util.Scanner;
+public class Liu_Max_Pg38Ex12 {
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        
+        System.out.println("Enter a bearing from 0 to 360.");
+        Scanner keyboard = new Scanner(System.in);
+        String input = keyboard.next();
+        
+        int bearing = Integer.parseInt(input);
+        long planeNumber = Math.round(bearing / 10.0);
+        System.out.println(planeNumber);
+        
+    }
+}

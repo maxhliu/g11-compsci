@@ -1,0 +1,38 @@
+/*
+ * October 16, 2012
+ * Liu_Max_Pg40Ex26
+ * ICS3U
+ * Mister Lim
+ */
+package liu_max_pg40ex26;
+
+import javax.swing.JOptionPane;
+
+/**
+ *
+ * @author Max
+ */
+public class Liu_Max_Pg40Ex26 {
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        String input;
+        input = JOptionPane.showInputDialog("Enter first integer value.", "Your input = a");
+        int a = Integer.parseInt(input);
+        input = JOptionPane.showInputDialog("Enter second integer value.", "Your input = b");
+        int b = Integer.parseInt(input);
+        input = JOptionPane.showInputDialog("Enter third integer value.", "Your input = c");
+        int c = Integer.parseInt(input);
+        input = JOptionPane.showInputDialog("Enter first double value.", "Your input = d");
+        double d = Double.parseDouble(input);
+        input = JOptionPane.showInputDialog("Enter second double value.", "Your input = e");
+        double e = Double.parseDouble(input);
+
+        JOptionPane.showMessageDialog(null, "Average of integer numbers is: " + ((a + b + c) / 3));
+        JOptionPane.showMessageDialog(null, "Average of double numbers is: " + ((d + e) / 2));
+        JOptionPane.showMessageDialog(null, "a*b % c + a / c is: " + (a * b % c + a / c));
+        JOptionPane.showMessageDialog(null, "d + d / 2 + e / 4 is: " + (d + d / 2 + e / 4));
+    }
+}
